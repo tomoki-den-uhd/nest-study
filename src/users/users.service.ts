@@ -3,14 +3,14 @@ import { User } from './users.model';
 
 @Injectable()
 export class UsersService {
-  private usres: User[] = [];
+  private users: User[] = [];
 
-  findAll() {
-    return 'This is UsersService';
+  findAll(): User[] {
+    return this.users;
   }
 
   create(user: User): User {
-    this.usres.push(user);
+    this.users.push(user);
     return user;
   }
 

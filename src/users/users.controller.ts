@@ -19,7 +19,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Post(':id')
+  @Post()
   create(
     @Body('id') id: number,
     @Body('name') name: string,

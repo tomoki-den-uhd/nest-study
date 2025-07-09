@@ -7,22 +7,21 @@ export class UsersController {
 
   @Get()
   findAll() {
-    return 'This is findAll';
-    // return this.usersService.findAll();
+    return this.usersService.findAll();
   }
 
   @Post(':id')
   create(@Param('id') id: string) {
-    return 'This is create';
+    return this.usersService.create();
   }
 
   @Put(':id')
   updateUser(@Param('id') id: string) {
-    return 'This is updateUser';
+    return this.usersService.updateUser();
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
-    return 'This is delete';
+    return this.usersService.delete();
   }
 }

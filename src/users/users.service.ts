@@ -26,7 +26,7 @@ export class UsersService {
     return 'This is UserService update';
   }
 
-  delete() {
-    return 'This is UserService delete';
+  delete(id: number) {
+    this.users = this.users.filter((user) => user.id !== id);
   }
 }

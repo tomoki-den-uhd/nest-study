@@ -9,6 +9,14 @@ export class UsersService {
     return this.users;
   }
 
+  findById(id: number): User {
+    const users = this.users.find((user) => user.id === id);
+    if (!users) {
+      throw new Error('ユーザが存在しません');
+    }
+    return users;
+  }
+
   create(user: User): User {
     this.users.push(user);
     return user;

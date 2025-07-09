@@ -42,8 +42,21 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(@Param('id') id: number) {
-    return this.usersService.updateUser();
+  updateUser(
+    @Param('id', ParseIntPipe)
+    @Body('id')
+    id: number,
+    @Body('name') name: string,
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ): User {
+    const user: User = {
+      id,
+      name,
+      email,
+      password,
+    };
+    return this.usersService.updateUser(user);
   }
 
   @Delete(':id')

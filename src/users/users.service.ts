@@ -22,8 +22,12 @@ export class UsersService {
     return user;
   }
 
-  updateUser() {
-    return 'This is UserService update';
+  updateUser(user: User): User {
+    const existingUser = this.findById(user.id);
+    const userIndex = this.users.findIndex((user) => user.id === user.id);
+    this.users[userIndex] = { ...existingUser, ...user };
+
+    return this.users[userIndex];
   }
 
   delete(id: number) {

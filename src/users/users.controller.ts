@@ -9,7 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './users.model';
+import { User } from '../../generated/prisma';
 import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
@@ -26,9 +26,10 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
+  //mailの例外フィルター外れたので入れ直す
   @Post()
-  create(@Body() createUserDto: CreateUserDto): User {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersService.create(createUserDto);
   }
 
   @Put(':id')

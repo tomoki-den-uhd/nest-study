@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './users.model';
+import { User } from '../../generated/prisma';
 import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly prismaService: PrismaService) {}
   private users: User[] = [];
 
   findAll(): User[] {
@@ -19,21 +21,26 @@ export class UsersService {
     return users;
   }
 
-  create(createUserDto: CreateUserDto): User {
-    const emailExists = this.users.some(
-      (user) => user.email === createUserDto.email,
-    );
-
-    if (emailExists) {
-      throw new EmailAlreadyExistsException(createUserDto.email);
-    }
-
-    const user: User = {
-      ...createUserDto,
-    };
-
-    this.users.push(user);
-    return user;
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const { name, email, password } = createUserDto;
+    return await this.prismaService.user.create({
+      data: {
+        name,
+        email,
+        password,
+      },
+    });
+    // const emailExists = this.users.some(
+    //   (user) => user.email === createUserDto.email,
+    // );
+    // if (emailExists) {
+    //   throw new EmailAlreadyExistsException(createUserDto.email);
+    // }
+    // const user: User = {
+    //   ...createUserDto,
+    // };
+    // this.users.push(user);
+    // return user;
   }
 
   updateUser(updateUserDto: UpdateUserDto): User {

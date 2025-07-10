@@ -15,11 +15,23 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-  email String @db.VarChar(255) @unique()
-  password String @db.VarChar(255)
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  email     String    @db.VarChar(255) @unique()
+  password  String    @db.VarChar(255)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime  @updatedAt @db.Timestamp(0)
+  products  Product[] @relation("UserProducts")
+}
 
+model Product {
+  id           Int      @id @default(autoincrement())
+  userName     String   @db.VarChar(255)
+  description  String   @db.VarChar(255)
+  price        Int
+  stock        Int
+  createUserId Int
+  createUser   User     @relation("UserProducts", fields: [createUserId], references: [id])
+  createdAt    DateTime @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @db.Timestamp(0)
 }

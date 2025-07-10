@@ -63,15 +63,6 @@ export class UsersService {
         password,
       },
     });
-    // const alreadyExistingUser = await this.prismaService.user.update({
-    //   where: { id },
-    //   data: {
-    //     name: updateUserDto.name,
-    //     email: updateUserDto.email,
-    //     password: updateUserDto.password,
-    //   },
-    // });
-    // return alreadyExistingUser;
   }
 
   //deleteのDB化済 フィルター化済

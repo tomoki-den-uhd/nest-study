@@ -17,13 +17,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number): User {
-    return this.usersService.findById(id);
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return await this.usersService.findById(id);
   }
 
   //mailの例外フィルター外れたので入れ直す
@@ -32,16 +32,16 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
-  @Put(':id')
-  updateUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): User {
-    return this.usersService.updateUser(updateUserDto);
-  }
+  //   @Put(':id')
+  //   updateUser(
+  //     @Param('id', ParseIntPipe) id: number,
+  //     @Body() updateUserDto: UpdateUserDto,
+  //   ): User {
+  //     return this.usersService.updateUser(updateUserDto);
+  //   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.delete(id);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.delete(id);
   }
 }

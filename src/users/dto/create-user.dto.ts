@@ -1,4 +1,3 @@
-import { Options } from '@nestjs/common';
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
@@ -32,7 +31,3 @@ export class UpdateUserDto {
   @MinLength(6)
   password: string;
 }
-
-//- nameは必須で、最大長は50文字とします。
-// - emailは必須で、有効なメールアドレス形式でなければなりません。
-// - passwordは必須で、最小長は6文字とします。

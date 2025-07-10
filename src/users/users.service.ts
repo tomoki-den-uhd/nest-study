@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './users.model';
 import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
 
 @Injectable()
 export class UsersService {
@@ -13,15 +14,24 @@ export class UsersService {
   findById(id: number): User {
     const users = this.users.find((user) => user.id === id);
     if (!users) {
-      throw new Error('ユーザが存在しません');
+      throw new NotFoundId(id);
     }
     return users;
   }
 
   create(createUserDto: CreateUserDto): User {
+    const emailExists = this.users.some(
+      (user) => user.email === createUserDto.email,
+    );
+
+    if (emailExists) {
+      throw new EmailAlreadyExistsException(createUserDto.email);
+    }
+
     const user: User = {
       ...createUserDto,
     };
+
     this.users.push(user);
     return user;
   }
@@ -32,8 +42,22 @@ export class UsersService {
       (user) => user.id === updateUserDto.id,
     );
 
-    this.users[userIndex] = { ...existingUser, ...updateUserDto };
-    return this.users[userIndex];
+    const emailExists = this.users.some(
+      (user) =>
+        user.email === updateUserDto.email && user.id !== updateUserDto.id,
+    );
+
+    if (emailExists) {
+      throw new EmailAlreadyExistsException(updateUserDto.email);
+    }
+
+    const updatedUser = {
+      ...existingUser,
+      ...updateUserDto,
+    };
+
+    this.users[userIndex] = updatedUser;
+    return updatedUser;
   }
 
   delete(id: number) {

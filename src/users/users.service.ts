@@ -27,12 +27,14 @@ export class UsersService {
     return found;
   }
 
-  //createのDB化済
+  //createのDB化済 maillの例外化
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const emailExists = this.prismaService.user.findUnique({
+    const emailExists = await this.prismaService.user.findUnique({
       where: { email: createUserDto.email },
     });
-    if (!emailExists) {
+    console.log('通過');
+    if (emailExists) {
+      console.log('チェック通過');
       throw new EmailAlreadyExistsException('createuserDto.email');
     }
     const { name, email, password } = createUserDto;
@@ -44,61 +46,6 @@ export class UsersService {
       },
     });
   }
-
-  //DB化してさらに例外フィルターかけたい
-  // const emailExists = this.prismaService.user.findUnique({
-  //   where: { email: createUserDto.email },
-  // });
-  // if (!emailExists)
-  //   throw new EmailAlreadyExistsException('createUserDto.eamil');
-
-  // return await this.prismaService.user.create({  });
-
-  //emailの例外フィルターかける前
-
-  // const exists = await this.prisma.user.findUnique({ where: { email: data.email } });
-  // if (exists) throw new ConflictException('Email already exists');
-  // return this.prisma.user.create({ data });
-
-  //DB化する前
-  // const emailExists = this.users.some(
-  //   (user) => user.email === createUserDto.email,
-  // );
-  // if (emailExists) {
-  //   throw new EmailAlreadyExistsException(createUserDto.email);
-  // }
-  // const user: User = {
-  //   ...createUserDto,
-  // };
-  // this.users.push(user);
-  // return user;
-
-  //   async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
-
-  //後でフィルター化
-  // const existingUser = this.findById(updateUserDto.id);
-  // const userIndex = this.users.findIndex(
-  //   (user) => user.id === updateUserDto.id,
-  // );
-
-  // const emailExists = this.users.some(
-  //   (user) =>
-  //     user.email === updateUserDto.email && user.id !== updateUserDto.id,
-  // );
-
-  // if (emailExists) {
-  //   throw new EmailAlreadyExistsException(updateUserDto.email);
-  // }
-
-  // const updatedUser = {
-  //   ...existingUser,
-  //   ...updateUserDto,
-  // };
-
-  //なぜエラーになっているのか後で検証
-  // this.users[userIndex] = updatedUser;
-  // return updatedUser;
-  //   }
 
   //deleteのDB化済 フィルター化済
   async delete(id: number) {

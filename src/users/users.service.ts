@@ -29,16 +29,12 @@ export class UsersService {
 
   //createのDB化済
   async create(createUserDto: CreateUserDto): Promise<User> {
-    //DB化してさらに例外フィルターかけたい
-    // const emailExists = this.prismaService.user.findUnique({
-    //   where: { email: createUserDto.email },
-    // });
-    // if (!emailExists)
-    //   throw new EmailAlreadyExistsException('createUserDto.eamil');
-
-    // return await this.prismaService.user.create({  });
-
-    //emailの例外フィルターかける前
+    const emailExists = this.prismaService.user.findUnique({
+      where: { email: createUserDto.email },
+    });
+    if (!emailExists) {
+      throw new EmailAlreadyExistsException('createuserDto.email');
+    }
     const { name, email, password } = createUserDto;
     return await this.prismaService.user.create({
       data: {
@@ -47,24 +43,35 @@ export class UsersService {
         password,
       },
     });
-
-    // const exists = await this.prisma.user.findUnique({ where: { email: data.email } });
-    // if (exists) throw new ConflictException('Email already exists');
-    // return this.prisma.user.create({ data });
-
-    //DB化する前
-    // const emailExists = this.users.some(
-    //   (user) => user.email === createUserDto.email,
-    // );
-    // if (emailExists) {
-    //   throw new EmailAlreadyExistsException(createUserDto.email);
-    // }
-    // const user: User = {
-    //   ...createUserDto,
-    // };
-    // this.users.push(user);
-    // return user;
   }
+
+  //DB化してさらに例外フィルターかけたい
+  // const emailExists = this.prismaService.user.findUnique({
+  //   where: { email: createUserDto.email },
+  // });
+  // if (!emailExists)
+  //   throw new EmailAlreadyExistsException('createUserDto.eamil');
+
+  // return await this.prismaService.user.create({  });
+
+  //emailの例外フィルターかける前
+
+  // const exists = await this.prisma.user.findUnique({ where: { email: data.email } });
+  // if (exists) throw new ConflictException('Email already exists');
+  // return this.prisma.user.create({ data });
+
+  //DB化する前
+  // const emailExists = this.users.some(
+  //   (user) => user.email === createUserDto.email,
+  // );
+  // if (emailExists) {
+  //   throw new EmailAlreadyExistsException(createUserDto.email);
+  // }
+  // const user: User = {
+  //   ...createUserDto,
+  // };
+  // this.users.push(user);
+  // return user;
 
   //   async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
 

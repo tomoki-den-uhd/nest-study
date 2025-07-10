@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../../generated/prisma';
-import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -32,13 +32,13 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
-  //   @Put(':id')
-  //   updateUser(
-  //     @Param('id', ParseIntPipe) id: number,
-  //     @Body() updateUserDto: UpdateUserDto,
-  //   ): User {
-  //     return this.usersService.updateUser(updateUserDto);
-  //   }
+  @Put(':id')
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.usersService.updateUser(id, updateUserDto);
+  }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {

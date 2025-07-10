@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../generated/prisma';
-import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -26,7 +26,6 @@ export class UsersService {
     }
     return found;
   }
-
   //createのDB化済 maillの例外化
   async create(createUserDto: CreateUserDto): Promise<User> {
     const emailExists = await this.prismaService.user.findUnique({
@@ -46,6 +45,28 @@ export class UsersService {
       },
     });
   }
+
+  //updateUserのDB化 例外化はまだ
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    return await this.prismaService.user.update({
+      where: { id },
+      data: {
+        name: updateUserDto.name,
+        email: updateUserDto.email,
+        password: updateUserDto.password,
+      },
+    });
+  }
+  //     const existingUser = await this.prismaService.user.findUnique({
+  //       where: {
+  //         id: createUserDto.id,
+  //       },
+  //     });
+  //     const userIndex = this.users.findIndex((user) => user.id === user.id);
+  //     this.prismaService.user[userIndex] = { ...existingUser, ...CreateUserDto };
+
+  //     return this.users[userIndex];
+  //   }
 
   //deleteのDB化済 フィルター化済
   async delete(id: number) {

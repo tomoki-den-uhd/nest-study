@@ -60,7 +60,14 @@ export class UsersService {
     return updatedUser;
   }
 
+  //デフォルト例外処理
   delete(id: number) {
+    const userExists = this.users.some((user) => user.id === id);
+    if (!userExists) {
+      throw new NotFoundException();
+    }
     this.users = this.users.filter((user) => user.id !== id);
   }
 }
+
+

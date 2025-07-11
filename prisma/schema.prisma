@@ -16,15 +16,15 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(255)
-  email     String    @db.VarChar(255) @unique()
+  name      String?    @db.VarChar(255)
+  email     String?    @db.VarChar(255) @unique()
   password  String    @db.VarChar(255)
   createdAt DateTime  @default(now()) @db.Timestamp(0)
   updatedAt DateTime  @updatedAt @db.Timestamp(0)
   products  Product[] 
-  userName String @unique
+  userName String? @unique
   role String @default("user")
-  lastLoginAt String 
+  lastLoginAt String?
 }
 
 model Product {
@@ -38,8 +38,3 @@ model Product {
   createdAt    DateTime @default(now()) @db.Timestamp(0)
   updatedAt    DateTime @default(now()) @db.Timestamp(0)
 }
-
-
-// 　・userName (string, unique)
-// 　・role (string, default: 'user')
-// 　・lastLoginAt（string）

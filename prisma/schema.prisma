@@ -21,7 +21,7 @@ model User {
   password  String    @db.VarChar(255)
   createdAt DateTime  @default(now()) @db.Timestamp(0)
   updatedAt DateTime  @updatedAt @db.Timestamp(0)
-  products  Product[] @relation("UserProducts")
+  products  Product[] 
 }
 
 model Product {
@@ -31,7 +31,7 @@ model Product {
   price        Int
   stock        Int
   createUserId Int
-  createUser   User     @relation("UserProducts", fields: [createUserId], references: [id])
+  createUser   User     @relation(fields: [createUserId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now()) @db.Timestamp(0)
   updatedAt    DateTime @default(now()) @db.Timestamp(0)
 }

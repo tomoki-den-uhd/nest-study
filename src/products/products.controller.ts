@@ -1,4 +1,13 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from '../../generated/prisma';
 import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
@@ -7,9 +16,9 @@ import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post('id')
-  create() {
-    return 'This is Product create';
+  @Post(':id')
+  async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+    return await this.productsService.create(createProductDto);
   }
 
   @Get()
@@ -17,9 +26,12 @@ export class ProductsController {
     return await this.productsService.findAll();
   }
 
-  @Put('id')
-  updateProduct() {
-    return 'This is Product updateProduct';
+  @Put(':id')
+  async updateProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    return await this.productsService.updateProduct(id, updateProductDto);
   }
 
   @Delete('id')

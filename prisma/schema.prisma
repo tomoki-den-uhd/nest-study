@@ -22,6 +22,9 @@ model User {
   createdAt DateTime  @default(now()) @db.Timestamp(0)
   updatedAt DateTime  @updatedAt @db.Timestamp(0)
   products  Product[] 
+  userName String @unique
+  role String @default("user")
+  lastLoginAt String 
 }
 
 model Product {
@@ -35,3 +38,8 @@ model Product {
   createdAt    DateTime @default(now()) @db.Timestamp(0)
   updatedAt    DateTime @default(now()) @db.Timestamp(0)
 }
+
+
+// 　・userName (string, unique)
+// 　・role (string, default: 'user')
+// 　・lastLoginAt（string）

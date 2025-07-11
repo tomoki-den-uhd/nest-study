@@ -12,10 +12,6 @@ export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
   private products: Product[] = [];
 
-  async findAll(): Promise<Product[]> {
-    return await this.prismaService.product.findMany();
-  }
-
   //ここにfindAllを使ってフィルタリング化するものをかく
   async findAllById(createUserId: number): Promise<Product[]> {
     return await this.prismaService.product.findMany({
@@ -25,33 +21,9 @@ export class ProductsService {
     });
   }
 
-  //   async findById(id: number, createUserId: number): Promise<Product> {
-  //     const found = await this.prismaService.product.findFirst({
-  //       where: {
-  //         id,
-  //         createUserId,
-  //       },
-  //     });
-  //     if (!found) {
-  //       throw new NotFoundId(id);
-  //     }
-  //     return found;
-  //   }
-
-  //findAllを使ってフィルタリング化できたら既存の下のfindByUserIdは消す
-
-  //下のコードfindAllByIdができたら消す
-  //   async findByUserId(createUserId: number): Promise<Product[]> {
-  //     const found = await this.prismaService.product.findMany({
-  //       where: {
-  //         createUserId,
-  //       },
-  //     });
-  //     if (!found) {
-  //       throw new NotFoundId(createUserId);
-  //     }
-  //     return found;
-  //   }
+  async findAll(): Promise<Product[]> {
+    return await this.prismaService.product.findMany();
+  }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const { userName, description, price, stock, createUserId } =

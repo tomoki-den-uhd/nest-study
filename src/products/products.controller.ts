@@ -22,25 +22,16 @@ export class ProductsController {
   }
 
   @Get()
-  async findAll(): Promise<Product[]> {
-    return await this.productsService.findAll();
-  }
-
-  //findAllを使ってフィルタリング化する
-  @Get()
   async findAllById(
     @Body('createUserId', ParseIntPipe) createUserId: number,
   ): Promise<Product[]> {
     return await this.productsService.findAllById(createUserId);
   }
 
-  //下のコードfindAllByIdができたら消す
-  // @Get(':id')
-  // async findByUserId(
-  //   @Param('id', ParseIntPipe) id: number,
-  // ): Promise<Product[]> {
-  //   return await this.productsService.findByUserId(id);
-  // }
+  @Get('all')
+  async findAll(): Promise<Product[]> {
+    return await this.productsService.findAll();
+  }
 
   @Put(':id')
   async updateProduct(

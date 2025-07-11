@@ -26,6 +26,20 @@ export class ProductsController {
     return await this.productsService.findAll();
   }
 
+  // @Get()
+  // async findAllById(
+  //   @Body('createUserId', ParseIntPipe) createUserId: number,
+  // ): Promise<Product> {
+  //   return await this.productsService.findAllById(createUserId);
+  // }
+
+  @Get(':id')
+  async findByUserId(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Product[]> {
+    return await this.productsService.findByUserId(id);
+  }
+
   @Put(':id')
   async updateProduct(
     @Param('id', ParseIntPipe) id: number,
@@ -35,12 +49,10 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.productsService.delete(id);
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('createUserId', ParseIntPipe) createUserId: number,
+  ) {
+    return await this.productsService.delete(id, createUserId);
   }
 }
-
-// POST /products: 新しい商品を作成します。リクエストボディに商品の情報とともに、createUserIdを含めてください。
-// GET /products/:id: 指定したIDの商品を取得します。
-// PUT /products/:id: 指定したIDの商品を更新します。
-// DELETE /products/:id: 指定したIDの商品を削除します。

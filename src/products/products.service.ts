@@ -16,14 +16,27 @@ export class ProductsService {
     return await this.prismaService.product.findMany();
   }
 
-  async findById(id: number): Promise<Product> {
-    const found = await this.prismaService.product.findUnique({
+  async findById(id: number, createUserId: number): Promise<Product> {
+    const found = await this.prismaService.product.findFirst({
       where: {
         id,
+        createUserId,
       },
     });
     if (!found) {
       throw new NotFoundId(id);
+    }
+    return found;
+  }
+
+  async findByUserId(createUserId: number): Promise<Product[]> {
+    const found = await this.prismaService.product.findMany({
+      where: {
+        createUserId,
+      },
+    });
+    if (!found) {
+      throw new NotFoundId(createUserId);
     }
     return found;
   }
@@ -48,6 +61,19 @@ export class ProductsService {
   ): Promise<Product> {
     const { userName, description, price, stock, createUserId } =
       updateProductDto;
+
+    // createUserIdでフィルタリングしてから更新
+    const existingProduct = await this.prismaService.product.findFirst({
+      where: {
+        id,
+        createUserId,
+      },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundId(id);
+    }
+
     return await this.prismaService.product.update({
       where: { id },
       data: {
@@ -60,7 +86,19 @@ export class ProductsService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, createUserId: number) {
+    // createUserIdでフィルタリングしてから削除
+    const existingProduct = await this.prismaService.product.findFirst({
+      where: {
+        id,
+        createUserId,
+      },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundId(id);
+    }
+
     return await this.prismaService.product.delete({
       where: { id },
     });

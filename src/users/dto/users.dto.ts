@@ -14,6 +14,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  userName: string;
 }
 
 export class UpdateUserDto {
@@ -30,4 +32,14 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  userNmae: string;
 }
+
+export class CreateUserNameDto {
+  id: number;
+
+  userName: string;
+  password: string;
+}
+

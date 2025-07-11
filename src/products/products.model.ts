@@ -5,7 +5,7 @@ export interface Product {
   price: number;
   stock: number;
   createUserId: number;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
 

@@ -16,6 +16,8 @@ export class ProductsService {
     return await this.prismaService.product.findMany();
   }
 
+  //ここにfindAllを使ってフィルタリング化するものをかく
+
   async findById(id: number, createUserId: number): Promise<Product> {
     const found = await this.prismaService.product.findFirst({
       where: {
@@ -28,6 +30,8 @@ export class ProductsService {
     }
     return found;
   }
+
+  //findAllを使ってフィルタリング化できたら既存の下のfindByUserIdは消す
 
   async findByUserId(createUserId: number): Promise<Product[]> {
     const found = await this.prismaService.product.findMany({

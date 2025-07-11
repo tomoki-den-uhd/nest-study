@@ -21,11 +21,8 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
-  //ここにfindAllを使ってフィルタリング化するものをかく
-  //動いたら既存の上記のfindAllは消す
-
   @Get(':id')
-  async findByUserId(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.usersService.findById(id);
   }
 

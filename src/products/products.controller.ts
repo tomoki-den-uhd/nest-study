@@ -34,9 +34,9 @@ export class ProductsController {
     return await this.productsService.updateProduct(id, updateProductDto);
   }
 
-  @Delete('id')
-  delete() {
-    return 'This is Product delete';
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return await this.productsService.delete(id);
   }
 }
 

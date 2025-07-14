@@ -1,7 +1,7 @@
 export class CreateProductDto {
   id: number;
 
-  userName: string;
+  productName: string;
 
   description: string;
 
@@ -15,7 +15,7 @@ export class CreateProductDto {
 export class UpdateProductDto {
   id: number;
 
-  userName: string;
+  productName: string;
 
   description: string;
 

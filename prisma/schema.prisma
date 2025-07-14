@@ -16,20 +16,19 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())
-  name      String?    @db.VarChar(255)
-  email     String?    @db.VarChar(255) @unique()
+  userName      String    @db.VarChar(255)
+  email     String    @db.VarChar(255) @unique()
   password  String    @db.VarChar(255)
   createdAt DateTime  @default(now()) @db.Timestamp(0)
   updatedAt DateTime  @updatedAt @db.Timestamp(0)
   products  Product[] 
-  userName String? @unique
   role String @default("user")
   lastLoginAt String?
 }
 
 model Product {
   id           Int      @id @default(autoincrement())
-  userName     String   @db.VarChar(255) @unique()
+  productName     String   @db.VarChar(255) @unique()
   description  String   @db.VarChar(255)
   price        Int
   stock        Int

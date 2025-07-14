@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../../generated/prisma';
-import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
+import { User } from './users.model';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -36,11 +37,11 @@ export class UsersService {
     if (emailExists) {
       throw new EmailAlreadyExistsException('createuserDto.email');
     }
-    const { name, email, password } = createUserDto;
+    const { userName, email, password } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     return await this.prismaService.user.create({
       data: {
-        name,
+        userName,
         email,
         password: hashedPassword,
       },
@@ -56,11 +57,11 @@ export class UsersService {
       throw new NotFoundId(id);
     }
 
-    const { name, email, password } = updateUserDto;
+    const { userName, email, password } = updateUserDto;
     return await this.prismaService.user.update({
       where: { id },
       data: {
-        name,
+        userName,
         email,
         password,
       },

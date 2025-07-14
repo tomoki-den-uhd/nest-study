@@ -7,18 +7,27 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from '../../generated/prisma';
 import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Request as ExpressRequest } from 'express';
+import { RequestUser } from 'src/types/requestUser';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-    return await this.productsService.create(createProductDto);
+  @UseGuards(AuthGuard('jwt'))
+  async create(
+    @Body() createProductDto: CreateProductDto,
+    @Request() req: ExpressRequest & { user: RequestUser },
+  ): Promise<Product> {
+    return await this.productsService.create(createProductDto, req.user.id);
   }
 
   @Get('all')

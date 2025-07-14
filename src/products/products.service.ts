@@ -26,9 +26,11 @@ export class ProductsService {
     return await this.prismaService.product.findMany();
   }
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { productName, description, price, stock, createUserId } =
-      createProductDto;
+  async create(
+    createProductDto: CreateProductDto,
+    createUserId: number,
+  ): Promise<Product> {
+    const { productName, description, price, stock } = createProductDto;
     return await this.prismaService.product.create({
       data: {
         productName,

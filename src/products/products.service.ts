@@ -12,25 +12,26 @@ export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
   private products: Product[] = [];
 
-  //ここにfindAllを使ってフィルタリング化するものをかく
-  async findAllById(createUserId: number): Promise<Product[]> {
+  async findAllById(id: number, createUserId: number): Promise<Product[]> {
     return await this.prismaService.product.findMany({
       where: {
+        id,
         createUserId,
       },
     });
   }
 
+  //ここにfindAllを使ってフィルタリング化するものをかく
   async findAll(): Promise<Product[]> {
     return await this.prismaService.product.findMany();
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { userName, description, price, stock, createUserId } =
+    const { productName, description, price, stock, createUserId } =
       createProductDto;
     return await this.prismaService.product.create({
       data: {
-        userName,
+        productName,
         description,
         price,
         stock,
@@ -43,7 +44,7 @@ export class ProductsService {
     id: number,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
-    const { userName, description, price, stock, createUserId } =
+    const { productName, description, price, stock, createUserId } =
       updateProductDto;
 
     // createUserIdでフィルタリングしてから更新
@@ -61,7 +62,7 @@ export class ProductsService {
     return await this.prismaService.product.update({
       where: { id },
       data: {
-        userName,
+        productName,
         description,
         price,
         stock,

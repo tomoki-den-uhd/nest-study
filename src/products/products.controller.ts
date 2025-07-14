@@ -16,19 +16,20 @@ import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post(':id')
+  @Post()
   async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return await this.productsService.create(createProductDto);
   }
 
-  @Get()
+  @Get(':id')
   async findAllById(
+    @Param('id', ParseIntPipe) id: number,
     @Body('createUserId', ParseIntPipe) createUserId: number,
   ): Promise<Product[]> {
-    return await this.productsService.findAllById(createUserId);
+    return await this.productsService.findAllById(id, createUserId);
   }
 
-  @Get('all')
+  @Get()
   async findAll(): Promise<Product[]> {
     return await this.productsService.findAll();
   }

@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Req,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -44,6 +46,7 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   async updateProduct(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
@@ -52,10 +55,15 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Body('createUserId', ParseIntPipe) createUserId: number,
+    @Request() req: ExpressRequest & { user: RequestUser },
   ) {
-    return await this.productsService.delete(id, createUserId);
+    if (createUserId !== req.user.id) {
+      throw new UnauthorizedException('ユーザIDが一致しません');
+    }
+    return await this.productsService.delete(id, req.user.id);
   }
 }

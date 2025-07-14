@@ -21,17 +21,17 @@ export class ProductsController {
     return await this.productsService.create(createProductDto);
   }
 
+  @Get('all')
+  async findAll(): Promise<Product[]> {
+    return await this.productsService.findAll();
+  }
+
   @Get(':id')
   async findAllById(
     @Param('id', ParseIntPipe) id: number,
     @Body('createUserId', ParseIntPipe) createUserId: number,
   ): Promise<Product[]> {
     return await this.productsService.findAllById(id, createUserId);
-  }
-
-  @Get()
-  async findAll(): Promise<Product[]> {
-    return await this.productsService.findAll();
   }
 
   @Put(':id')

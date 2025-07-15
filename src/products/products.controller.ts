@@ -18,13 +18,16 @@ import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request as ExpressRequest } from 'express';
 import { RequestUser } from 'src/types/requestUser';
+import { Roles } from 'src/auth/guard/roles.decorators';
+import { RolesGuard } from 'src/auth/guard/roles.gurad';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   async create(
     @Body() createProductDto: CreateProductDto,
     @Request() req: ExpressRequest & { user: RequestUser },

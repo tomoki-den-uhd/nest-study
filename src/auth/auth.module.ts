@@ -7,6 +7,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './dto/jwt.strategy';
+import { RolesGuard } from './guard/roles.gurad';
 
 @Module({
   imports: [

@@ -7,9 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Req,
   Request,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -25,9 +23,9 @@ import { RolesGuard } from 'src/auth/guard/roles.gurad';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  //createはadmmin user問わず作成可能
   @Post()
-  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'))
   async create(
     @Body() createProductDto: CreateProductDto,
     @Request() req: ExpressRequest & { user: RequestUser },
@@ -35,11 +33,15 @@ export class ProductsController {
     return await this.productsService.create(createProductDto, req.user.id);
   }
 
+  //adminだけがすべての商品を検索可能
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get('all')
+  @Roles('admin')
   async findAll(): Promise<Product[]> {
     return await this.productsService.findAll();
   }
 
+  //createUserIdでフィルタリングして商品検索
   @Get(':id')
   async findAllById(
     @Param('id', ParseIntPipe) id: number,
@@ -48,6 +50,7 @@ export class ProductsController {
     return await this.productsService.findAllById(id, createUserId);
   }
 
+  //jwt認証でbear tokenが一致すれば商品のupdateが可能
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   async updateProduct(
@@ -57,16 +60,14 @@ export class ProductsController {
     return await this.productsService.updateProduct(id, updateProductDto);
   }
 
+  //adminだけが商品を削除可能
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   async delete(
     @Param('id', ParseIntPipe) id: number,
-    @Body('createUserId', ParseIntPipe) createUserId: number,
     @Request() req: ExpressRequest & { user: RequestUser },
   ) {
-    if (createUserId !== req.user.id) {
-      throw new UnauthorizedException('ユーザIDが一致しません');
-    }
-    return await this.productsService.delete(id, req.user.id);
+    return await this.productsService.delete(id);
   }
 }

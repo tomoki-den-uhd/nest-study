@@ -73,12 +73,10 @@ export class ProductsService {
     });
   }
 
-  async delete(id: number, createUserId: number) {
-    // createUserIdでフィルタリングしてから削除
+  async delete(id: number) {
     const existingProduct = await this.prismaService.product.findFirst({
       where: {
         id,
-        createUserId,
       },
     });
 

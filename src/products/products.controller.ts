@@ -18,6 +18,7 @@ import { Request as ExpressRequest } from 'express';
 import { RequestUser } from 'src/types/requestUser';
 import { Roles } from 'src/auth/guard/roles.decorators';
 import { RolesGuard } from 'src/auth/guard/roles.gurad';
+import { UnauthorizedException, NotFoundException } from '@nestjs/common';
 
 @Controller('products')
 export class ProductsController {
@@ -41,7 +42,7 @@ export class ProductsController {
     return await this.productsService.findAll();
   }
 
-  //createUserIdでフィルタリングして商品検索
+  //ログインユーザが作成した商品検索
   @Get(':id')
   async findAllById(
     @Param('id', ParseIntPipe) id: number,
@@ -50,7 +51,7 @@ export class ProductsController {
     return await this.productsService.findAllById(id, createUserId);
   }
 
-  //jwt認証でbear tokenが一致すれば商品のupdateが可能
+  //ログインユーザが作成した商品ならupdate可能
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   async updateProduct(
@@ -60,14 +61,26 @@ export class ProductsController {
     return await this.productsService.updateProduct(id, updateProductDto);
   }
 
-  //adminだけが商品を削除可能
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  //adminかログインユーザが作成した商品なら削除可能
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  @Roles('admin')
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: ExpressRequest & { user: RequestUser },
   ) {
-    return await this.productsService.delete(id);
+    const product = await this.productsService.findById(id);
+
+    if (!product) {
+      throw new NotFoundException('商品が見つかりません');
+    }
+
+    if (req.user.role === 'admin') {
+      return await this.productsService.delete(id, product.createUserId);
+    }
+
+    if (product.createUserId === req.user.id) {
+      return await this.productsService.delete(id, req.user.id);
+    }
+    throw new UnauthorizedException('削除権限がありません');
   }
 }

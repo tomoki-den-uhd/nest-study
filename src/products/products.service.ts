@@ -73,10 +73,11 @@ export class ProductsService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, createUserId: number) {
     const existingProduct = await this.prismaService.product.findFirst({
       where: {
         id,
+        createUserId,
       },
     });
 
@@ -85,6 +86,12 @@ export class ProductsService {
     }
 
     return await this.prismaService.product.delete({
+      where: { id },
+    });
+  }
+
+  async findById(id: number) {
+    return await this.prismaService.product.findUnique({
       where: { id },
     });
   }

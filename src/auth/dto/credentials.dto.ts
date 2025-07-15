@@ -1,4 +1,5 @@
 import { IsNotEmpty, MaxLength, IsEmail, MinLength } from 'class-validator';
+import { defaultIfEmpty } from 'rxjs';
 
 export class CredentialsDto {
   @IsNotEmpty()
@@ -12,4 +13,6 @@ export class CredentialsDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  role;
 }

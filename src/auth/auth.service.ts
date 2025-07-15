@@ -24,13 +24,14 @@ export class AuthService {
     if (emailExists) {
       throw new EmailAlreadyExistsException('credentialsDto.email');
     }
-    const { userName, email, password } = credentialsDto;
+    const { userName, email, password, role } = credentialsDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     return await this.prismaService.user.create({
       data: {
         userName,
         email,
         password: hashedPassword,
+        role,
       },
     });
   }

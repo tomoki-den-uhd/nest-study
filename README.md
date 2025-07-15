@@ -96,3 +96,26 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+##基本ルール
+・nest-studyフォルダを作成し、README.mdファイルを作成し、このルールをコピペで貼り付けてください。
+・nest-studyをgitのリモートリポジトリにpushしてください。
+・課題ごとにブランチを作成し、なるべくこまめにコミットを実施してください。コミット名は簡潔でわかりやすものにしてください。
+・課題完了後プルリクエストを作成してください。プルリクエストを作成したらslackにて完了と確認の旨を連絡してください。
+・プルリクエストのメッセージには、対応内容/エビデンスのスクリーンショットなどを記載し、わかりやすく説明できるようにしてください。
+・READMEには環境構築方法と起動方法、基本的なフォルダ構成の説明を記載してください。
+・動画内でrepositoryの作成手順がある場合はskipして下さい。
+
+コーディング規約
+・関数や変数には可能な限りコメントをつけましょう
+・コードの可読性を高めるために、一貫したインデントとスペースを使用するようにpretteirを入れてください。
+https://deku.posstree.com/react/prettier/#google_vignette
+・コードのエラー検知をしやすくするために、eslintを導入してください。
+https://zenn.dev/ianchen0419/articles/3c4644d5f20bdb
+・関数名、変数名、クラス名などの命名規則に従う
+・ファイル名：パスカルケース（PascalCase）
+・関数と変数：キャメルケース（camelCase）
+
+時間管理と振り返り
+・各課題を行う際に実施時間を計測してください、課題以外のものをする際にはタイマーを止めてください。
+・完了後、「難しかったポイント」に自分なりのポイントを記載してください。

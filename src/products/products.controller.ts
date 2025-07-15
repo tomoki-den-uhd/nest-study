@@ -66,6 +66,7 @@ export class ProductsController {
   @Delete(':id')
   async delete(
     @Param('id', ParseIntPipe) id: number,
+    @Body('createUserId', ParseIntPipe) createUserId: number,
     @Request() req: ExpressRequest & { user: RequestUser },
   ) {
     const product = await this.productsService.findById(id);
@@ -78,7 +79,7 @@ export class ProductsController {
       return await this.productsService.delete(id, product.createUserId);
     }
 
-    if (product.createUserId === req.user.id) {
+    if (createUserId === req.user.id) {
       return await this.productsService.delete(id, req.user.id);
     }
     throw new UnauthorizedException('削除権限がありません');

@@ -23,13 +23,10 @@ export class RolesGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    console.log('user in guard:', user);
-    console.log('user is missing or has no role:', user);
     if (!user || !user.role) {
       throw new UnauthorizedException('ユーザー情報またはロールがありません');
     }
 
-    console.log('user:', user);
     return requiredRoles.includes(user.role);
   }
 }

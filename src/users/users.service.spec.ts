@@ -3,14 +3,14 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
-import { ROUTES } from '@nestjs/core/router/router-module';
-import { PassThrough } from 'stream';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 const mockPrismaService = {
   user: {
     create: jest.fn(),
     findUnique: jest.fn(),
     findById: jest.fn(),
+    update: jest.fn(),
   },
 };
 
@@ -88,6 +88,38 @@ describe('UsersServieTest', () => {
       (prismaService.user.findUnique as jest.Mock).mockResolvedValue({});
       const expected = {};
       await expect(usersService.findById(1)).resolves.toEqual(expected);
+    });
+  });
+
+  describe('update', () => {
+    it('idが見つからなかった時', async () => {
+      (prismaService.user.findUnique as jest.Mock).mockRejectedValue(
+        new NotFoundId(99868),
+      );
+
+      await expect(usersService.findById(99868)).rejects.toThrow(
+        `指定されたID:99868は見つかりませんでした`,
+      );
+    });
+
+    it('正常系', async () => {
+      const updateUserDto: UpdateUserDto = {
+        id: 297452,
+        userName: 'ganioseogah',
+        email: 'ganjkeghwiyt@ngan.gaiue',
+        password: 'hgkalhaiehga',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(297452);
+      (prismaService.user.update as jest.Mock).mockResolvedValue(updateUserDto);
+      await expect(
+        usersService.updateUser(297452, updateUserDto),
+      ).resolves.toEqual({
+        id: 297452,
+        userName: 'ganioseogah',
+        email: 'ganjkeghwiyt@ngan.gaiue',
+        password: 'hgkalhaiehga',
+      });
     });
   });
 });

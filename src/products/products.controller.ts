@@ -27,11 +27,11 @@ export class ProductsController {
   }
 
   @Get(':id')
-  async findAllById(
+  async findById(
     @Param('id', ParseIntPipe) id: number,
     @Body('createUserId', ParseIntPipe) createUserId: number,
-  ): Promise<Product[]> {
-    return await this.productsService.findAllById(id, createUserId);
+  ): Promise<Product> {
+    return await this.productsService.findById(id, createUserId);
   }
 
   @Put(':id')

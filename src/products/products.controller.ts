@@ -44,11 +44,11 @@ export class ProductsController {
 
   //ログインユーザが作成した商品検索
   @Get(':id')
-  async findAllById(
+  async findByProductId(
     @Param('id', ParseIntPipe) id: number,
     @Body('createUserId', ParseIntPipe) createUserId: number,
-  ): Promise<Product[]> {
-    return await this.productsService.findAllById(id, createUserId);
+  ): Promise<Product> {
+    return await this.productsService.findByProductId(id, createUserId);
   }
 
   //ログインユーザが作成した商品ならupdate可能

@@ -2,12 +2,15 @@ import { Test } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { EmailAlreadyExistsException } from './users.exception';
+import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
+import { ROUTES } from '@nestjs/core/router/router-module';
+import { PassThrough } from 'stream';
 
 const mockPrismaService = {
   user: {
     create: jest.fn(),
     findUnique: jest.fn(),
+    findById: jest.fn(),
   },
 };
 
@@ -31,21 +34,18 @@ describe('UsersServieTest', () => {
   });
 
   describe('create', () => {
-    it('emailが正しくない時', async () => {
+    it('emailが重複している時', async () => {
       const createUserDto: CreateUserDto = {
         id: 1,
         userName: 'test',
         email: 'test@test.com',
         password: 'password',
       };
-      (prismaService.user.findUnique as jest.Mock).mockResolvedValue({
-        id: 2,
-        userName: createUserDto.userName,
-        email: createUserDto.email,
-        password: createUserDto.password,
-      });
+      (prismaService.user.findUnique as jest.Mock).mockRejectedValue(
+        new EmailAlreadyExistsException('test@test.com'),
+      );
       await expect(usersService.create(createUserDto)).rejects.toThrow(
-        EmailAlreadyExistsException,
+        'メールアドレス:test@test.comは既に登録されています',
       );
     });
 
@@ -57,11 +57,37 @@ describe('UsersServieTest', () => {
         password: 'password',
       };
       (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prismaService.user.create as jest.Mock).mockResolvedValue({});
-      const expected = {};
-      await expect(usersService.create(createUserDto)).resolves.toEqual(
-        expected,
+      (prismaService.user.create as jest.Mock).mockResolvedValue(createUserDto);
+      await expect(usersService.create(createUserDto)).resolves.toEqual({
+        id: 1,
+        userName: 'test',
+        email: 'test1@test.com',
+        password: 'password',
+      });
+    });
+  });
+
+  describe('findById', () => {
+    it('idが見つからなかった時', async () => {
+      (prismaService.user.findUnique as jest.Mock).mockRejectedValue(
+        new NotFoundId(2),
       );
+
+      await expect(usersService.findById(2)).rejects.toThrow(
+        `指定されたID:2は見つかりませんでした`,
+      );
+    });
+
+    it('正常系', async () => {
+      const createUserDto: CreateUserDto = {
+        id: 1,
+        userName: 'テスト',
+        email: 'test.findById@test.com',
+        password: 'password',
+      };
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue({});
+      const expected = {};
+      await expect(usersService.findById(1)).resolves.toEqual(expected);
     });
   });
 });

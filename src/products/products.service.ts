@@ -11,7 +11,7 @@ import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findById(id: number, createUserId: number): Promise<Product> {
+  async findByProductId(id: number, createUserId: number): Promise<Product> {
     const productExist = await this.prismaService.product.findUnique({
       where: {
         id,

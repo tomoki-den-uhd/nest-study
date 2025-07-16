@@ -9,8 +9,8 @@ const mockPrismaService = {
   user: {
     create: jest.fn(),
     findUnique: jest.fn(),
-    findById: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   },
 };
 
@@ -119,6 +119,35 @@ describe('UsersServieTest', () => {
         userName: 'ganioseogah',
         email: 'ganjkeghwiyt@ngan.gaiue',
         password: 'hgkalhaiehga',
+      });
+    });
+  });
+
+  describe('delete', () => {
+    it('idが見つからなかった時', async () => {
+      (prismaService.user.findUnique as jest.Mock).mockRejectedValue(
+        new NotFoundId(99868),
+      );
+
+      await expect(usersService.findById(99868)).rejects.toThrow(
+        `指定されたID:99868は見つかりませんでした`,
+      );
+    });
+
+    it('正常値', async () => {
+      const deleteUserDto: CreateUserDto = {
+        id: 93251,
+        userName: 'anguaew',
+        email: 'lajga@gnae.com',
+        password: 'glairhaowe',
+      };
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(93251);
+      (prismaService.user.delete as jest.Mock).mockResolvedValue(deleteUserDto);
+      await expect(usersService.delete(93251)).resolves.toEqual({
+        id: 93251,
+        userName: 'anguaew',
+        email: 'lajga@gnae.com',
+        password: 'glairhaowe',
       });
     });
   });

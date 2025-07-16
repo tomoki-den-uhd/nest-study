@@ -34,9 +34,11 @@ export class ProductsService {
     return await this.prismaService.product.findMany();
   }
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { productName, description, price, stock, createUserId } =
-      createProductDto;
+  async create(
+    createProductDto: CreateProductDto,
+    createUserId: number,
+  ): Promise<Product> {
+    const { productName, description, price, stock } = createProductDto;
     return await this.prismaService.product.create({
       data: {
         productName,
@@ -80,7 +82,6 @@ export class ProductsService {
   }
 
   async delete(id: number, createUserId: number) {
-    // createUserIdでフィルタリングしてから削除
     const existingProduct = await this.prismaService.product.findFirst({
       where: {
         id,
@@ -93,6 +94,12 @@ export class ProductsService {
     }
 
     return await this.prismaService.product.delete({
+      where: { id },
+    });
+  }
+
+  async findById(id: number) {
+    return await this.prismaService.product.findUnique({
       where: { id },
     });
   }

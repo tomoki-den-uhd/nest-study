@@ -3,71 +3,80 @@ import { User } from './users.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly prismaService: PrismaService) {}
   private users: User[] = [];
 
-  findAll(): User[] {
-    return this.users;
+  //findAllのDB化済み
+  async findAll(): Promise<User[]> {
+    return await this.prismaService.user.findMany();
   }
 
-  findById(id: number): User {
-    const users = this.users.find((user) => user.id === id);
-    if (!users) {
+  //findByIdのDB化済み 例外フィルター化済
+  async findById(id: number): Promise<User> {
+    const found = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!found) {
       throw new NotFoundId(id);
     }
-    return users;
+    return found;
   }
 
-  create(createUserDto: CreateUserDto): User {
-    const emailExists = this.users.some(
-      (user) => user.email === createUserDto.email,
-    );
-
+  //createのDB化済 maillの例外化
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const emailExists = await this.prismaService.user.findUnique({
+      where: { email: createUserDto.email },
+    });
     if (emailExists) {
-      throw new EmailAlreadyExistsException(createUserDto.email);
+      throw new EmailAlreadyExistsException('createuserDto.email');
+    }
+    const { userName, email, password } = createUserDto;
+    return await this.prismaService.user.create({
+      data: {
+        userName,
+        email,
+        password,
+      },
+    });
+  }
+
+  //updateUserのDB化 例外化済
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+    if (!existingUser) {
+      throw new NotFoundId(id);
     }
 
-    const user: User = {
-      ...createUserDto,
-    };
-
-    this.users.push(user);
-    return user;
+    const { userName, email, password } = updateUserDto;
+    return await this.prismaService.user.update({
+      where: { id },
+      data: {
+        userName,
+        email,
+        password,
+      },
+    });
   }
 
-  updateUser(updateUserDto: UpdateUserDto): User {
-    const existingUser = this.findById(updateUserDto.id);
-    const userIndex = this.users.findIndex(
-      (user) => user.id === updateUserDto.id,
-    );
-
-    const emailExists = this.users.some(
-      (user) =>
-        user.email === updateUserDto.email && user.id !== updateUserDto.id,
-    );
-
-    if (emailExists) {
-      throw new EmailAlreadyExistsException(updateUserDto.email);
-    }
-
-    const updatedUser = {
-      ...existingUser,
-      ...updateUserDto,
-    };
-
-    this.users[userIndex] = updatedUser;
-    return updatedUser;
-  }
-
-  //デフォルト例外処理
-  delete(id: number) {
-    const userExists = this.users.some((user) => user.id === id);
+  //deleteのDB化済 フィルター化済
+  async delete(id: number) {
+    const userExists = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
     if (!userExists) {
       throw new NotFoundException();
     }
-    this.users = this.users.filter((user) => user.id !== id);
+    return this.prismaService.user.delete({ where: { id } });
   }
 }
 

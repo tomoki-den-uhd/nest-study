@@ -71,14 +71,6 @@ describe('UsersServieTest', () => {
   });
 
   describe('findById', () => {
-    it('idが見つからなかった時', async () => {
-      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
-
-      await expect(usersService.findById(2)).rejects.toThrow(
-        `指定されたID:2は見つかりませんでした`,
-      );
-    });
-
     it('正常系', async () => {
       const createUserDto: CreateUserDto = {
         id: 1,
@@ -89,6 +81,14 @@ describe('UsersServieTest', () => {
       (prismaService.user.findUnique as jest.Mock).mockResolvedValue({});
       const expected = {};
       await expect(usersService.findById(1)).resolves.toEqual(expected);
+    });
+
+    it('idが見つからなかった時', async () => {
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(usersService.findById(2)).rejects.toThrow(
+        `指定されたID:2は見つかりませんでした`,
+      );
     });
   });
 

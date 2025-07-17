@@ -31,6 +31,7 @@ describe('UsersCreateTest', () => {
     usersService = module.get<UsersService>(UsersService);
   });
 
+  //バリデーションが抜けている
   describe('POST/users', () => {
     it('正常値', async () => {
       const createUser: CreateUserDto = {
@@ -92,16 +93,16 @@ describe('UsersCreateTest', () => {
         usersController.updateUser(updateUserDto.id, updateUserDto),
       ).resolves.toEqual(expectedResult);
     });
-  });
 
-  it('存在しないIDを指定いる時', async () => {
-    (mockUserService.updateUser as jest.Mock).mockRejectedValue(
-      new NotFoundId(2),
-    );
+    it('存在しないIDを指定いる時', async () => {
+      (mockUserService.updateUser as jest.Mock).mockRejectedValue(
+        new NotFoundId(2),
+      );
 
-    await expect(mockUserService.updateUser(2)).rejects.toThrow(
-      `指定されたID:2は見つかりませんでした`,
-    );
+      await expect(mockUserService.updateUser(2)).rejects.toThrow(
+        `指定されたID:2は見つかりませんでした`,
+      );
+    });
   });
 
   describe('DELETE/users/:id', () => {

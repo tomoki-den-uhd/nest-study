@@ -11,6 +11,7 @@ describe('UsersCreateTest', () => {
   const mockUserService = {
     create: jest.fn(),
     findById: jest.fn(),
+    updateUser: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -67,5 +68,38 @@ describe('UsersCreateTest', () => {
       (mockUserService.findById as jest.Mock).mockResolvedValue(getUser);
       await expect(usersController.findById(1)).resolves.toEqual(getUser);
     });
+  });
+
+  describe('PUT/users/:id', () => {
+    it('正常値', async () => {
+      const updateUserDto: CreateUserDto = {
+        id: 1,
+        userName: 'nageihgaiwe',
+        email: 'test@test.com',
+        password: 'password',
+      };
+      const expectedResult: CreateUserDto = {
+        id: 1,
+        userName: 'gaiue',
+        email: 'gna@na.com',
+        password: 'gnaiu',
+      };
+      (mockUserService.updateUser as jest.Mock).mockResolvedValue(
+        expectedResult,
+      );
+      await expect(
+        usersController.updateUser(updateUserDto.id, updateUserDto),
+      ).resolves.toEqual(expectedResult);
+    });
+  });
+
+  it('存在しないIDを指定いる時', async () => {
+    (mockUserService.updateUser as jest.Mock).mockRejectedValue(
+      new NotFoundId(2),
+    );
+
+    await expect(mockUserService.updateUser(2)).rejects.toThrow(
+      `指定されたID:2は見つかりませんでした`,
+    );
   });
 });

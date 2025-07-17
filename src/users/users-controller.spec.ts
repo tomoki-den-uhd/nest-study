@@ -32,7 +32,6 @@ describe('UsersCreateTest', () => {
     usersService = module.get<UsersService>(UsersService);
   });
 
-  //バリデーションが抜けている
   describe('POST/users', () => {
     it('正常値', async () => {
       const createUser: CreateUserDto = {

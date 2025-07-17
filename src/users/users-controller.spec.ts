@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundId } from './users.exception';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UsersCreateTest', () => {
   let usersController: UsersController;
@@ -44,6 +45,26 @@ describe('UsersCreateTest', () => {
       (mockUserService.create as jest.Mock).mockResolvedValue(createUser);
       await expect(usersController.create(createUser)).resolves.toEqual(
         createUser,
+      );
+    });
+
+    it('ユーザーネームが長すぎる場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName:
+          'gisaugaiolngighariyua;h;jharoajhiaotliaghrsaejiagheiognaegjaiogiahorgnasejgiagiehanre.aieg',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (mockUserService.create as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException(
+          'userName must be shorter than or equal to 50 characters',
+        );
+      });
+
+      await expect(usersController.create(createUser)).rejects.toThrow(
+        'userName must be shorter than or equal to 50 characters',
       );
     });
   });

@@ -130,14 +130,6 @@ describe('UsersServieTest', () => {
   });
 
   describe('delete', () => {
-    it('idが見つからなかった時', async () => {
-      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
-
-      await expect(usersService.delete(99868)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
     it('正常値', async () => {
       const deleteUserDto: CreateUserDto = {
         id: 93251,
@@ -153,4 +145,12 @@ describe('UsersServieTest', () => {
       await expect(usersService.delete(93251)).resolves.toEqual(deleteUserDto);
     });
   });
+
+  it('idが見つからなかった時', async () => {
+    (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+
+    await expect(usersService.delete(99868)).rejects.toThrow(NotFoundException);
+  });
+
+    
 });

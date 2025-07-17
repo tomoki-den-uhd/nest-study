@@ -4,7 +4,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { create } from 'domain';
 
 const mockPrismaService = {
   user: {
@@ -68,6 +69,65 @@ describe('UsersServieTest', () => {
         'メールアドレス:test@test.comは既に登録されています',
       );
     });
+
+    it('ユーザーネームが長すぎる場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName:
+          'gisaugaiolngighariyua;h;jharoajhiaotliaghrsaejiagheiognaegjaiogiahorgnasejgiagiehanre.aieg',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (prismaService.user.create as jest.Mock).mockRejectedValue(
+        new BadRequestException(
+          'userName must be shorter than or equal to 50 characters',
+        ),
+      );
+
+      await expect(usersService.create(createuserDto)).rejects.toThrow(
+        'userName must be shorter than or equal to 50 characters',
+      );
+    });
+
+    it('メールアドレスが無効の形式の場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test-test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (prismaService.user.create as jest.Mock).mockRejectedValue(
+        new BadRequestException('email must be an email'),
+      );
+
+      await expect(usersService.create(createuserDto)).rejects.toThrow(
+        'email must be an email',
+      );
+    });
+
+    it('パスワードが短い場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (prismaService.user.create as jest.Mock).mockRejectedValue(
+        new BadRequestException(
+          'password must be longer than or equal to 6 characters',
+        ),
+      );
+
+      await expect(usersService.create(createuserDto)).rejects.toThrow(
+        'password must be longer than or equal to 6 characters',
+      );
+    });
   });
 
   describe('findById', () => {
@@ -127,6 +187,86 @@ describe('UsersServieTest', () => {
         }),
       ).rejects.toThrow('指定されたID:99868は見つかりませんでした');
     });
+
+    it('ユーザーネームが長すぎる場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName:
+          'gisaugaiolngighariyua;h;jharoajhiaotliaghrsaejiagheiognaegjaiogiahorgnasejgiagiehanre.aieg',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      });
+
+      (prismaService.user.update as jest.Mock).mockRejectedValue(
+        new BadRequestException(
+          'userName must be shorter than or equal to 50 characters',
+        ),
+      );
+
+      await expect(
+        usersService.updateUser(createuserDto.id, createuserDto),
+      ).rejects.toThrow(
+        'userName must be shorter than or equal to 50 characters',
+      );
+    });
+
+    it('メールアドレスが無効の形式の場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test-test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      });
+      (prismaService.user.update as jest.Mock).mockRejectedValue(
+        new BadRequestException('email must be an email'),
+      );
+
+      await expect(
+        usersService.updateUser(createuserDto.id, createuserDto),
+      ).rejects.toThrow('email must be an email');
+    });
+
+    it('パスワードが短い場合', async () => {
+      const createuserDto: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      });
+
+      (prismaService.user.update as jest.Mock).mockRejectedValue(
+        new BadRequestException(
+          'password must be longer than or equal to 6 characters',
+        ),
+      );
+
+      await expect(
+        usersService.updateUser(createuserDto.id, createuserDto),
+      ).rejects.toThrow(
+        'password must be longer than or equal to 6 characters',
+      );
+    });
   });
 
   describe('delete', () => {
@@ -151,6 +291,4 @@ describe('UsersServieTest', () => {
 
     await expect(usersService.delete(99868)).rejects.toThrow(NotFoundException);
   });
-
-    
 });

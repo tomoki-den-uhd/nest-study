@@ -1,10 +1,10 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Product } from './products.model';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import {
   EmailAlreadyExistsException,
   NotFoundId,
-} from 'src/users/users.exception';
+} from '../users/users.exception';
 import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 
 @Injectable()

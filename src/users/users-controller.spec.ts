@@ -67,6 +67,26 @@ describe('UsersCreateTest', () => {
         'userName must be shorter than or equal to 50 characters',
       );
     });
+
+    it('メールアドレスが正しい形式じゃない場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test-test.com',
+        password: 'password',
+      };
+
+      (mockUserService.create as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException('email must be an email');
+      });
+
+      await expect(usersController.create(createUser)).rejects.toThrow(
+        'email must be an email',
+      );
+    });
+  
+
+
   });
 
   describe('GET/users/:id', () => {

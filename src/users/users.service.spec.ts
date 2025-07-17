@@ -35,22 +35,6 @@ describe('UsersServieTest', () => {
   });
 
   describe('create', () => {
-    it('emailが重複している時', async () => {
-      const createUserDto: CreateUserDto = {
-        id: 1,
-        userName: 'test',
-        email: 'test@test.com',
-        password: 'password',
-      };
-
-      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(
-        createUserDto,
-      );
-
-      await expect(usersService.create(createUserDto)).rejects.toThrow(
-        'メールアドレス:test@test.comは既に登録されています',
-      );
-    });
     it('正常系', async () => {
       const createUserDto: CreateUserDto = {
         id: 1,
@@ -66,6 +50,23 @@ describe('UsersServieTest', () => {
         email: 'test1@test.com',
         password: 'password',
       });
+    });
+
+    it('emailが重複している時', async () => {
+      const createUserDto: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(
+        createUserDto,
+      );
+
+      await expect(usersService.create(createUserDto)).rejects.toThrow(
+        'メールアドレス:test@test.comは既に登録されています',
+      );
     });
   });
 

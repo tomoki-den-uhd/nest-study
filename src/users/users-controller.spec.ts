@@ -84,9 +84,24 @@ describe('UsersCreateTest', () => {
         'email must be an email',
       );
     });
-  
 
+    it('パスワードが短い場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'ps',
+      };
+      (mockUserService.create as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException(
+          'password must be longer than or equal to 6 characters',
+        );
+      });
 
+      await expect(usersController.create(createUser)).rejects.toThrow(
+        'password must be longer than or equal to 6 characters',
+      );
+    });
   });
 
   describe('GET/users/:id', () => {

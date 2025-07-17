@@ -93,19 +93,6 @@ describe('UsersServieTest', () => {
   });
 
   describe('update', () => {
-    it('idが見つからなかった時', async () => {
-      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
-
-      await expect(
-        usersService.updateUser(99868, {
-          id: 1,
-          userName: 'test',
-          email: 'test1@test.com',
-          password: 'password',
-        }),
-      ).rejects.toThrow('指定されたID:99868は見つかりませんでした');
-    });
-
     it('正常系', async () => {
       const updateUserDto: UpdateUserDto = {
         id: 297452,
@@ -126,6 +113,19 @@ describe('UsersServieTest', () => {
       await expect(
         usersService.updateUser(297452, updateUserDto),
       ).resolves.toEqual(updateUserDto);
+    });
+
+    it('idが見つからなかった時', async () => {
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        usersService.updateUser(99868, {
+          id: 1,
+          userName: 'test',
+          email: 'test1@test.com',
+          password: 'password',
+        }),
+      ).rejects.toThrow('指定されたID:99868は見つかりませんでした');
     });
   });
 

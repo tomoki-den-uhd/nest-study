@@ -158,6 +158,65 @@ describe('UsersCreateTest', () => {
         `指定されたID:2は見つかりませんでした`,
       );
     });
+
+    it('ユーザーネームが長すぎる場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName:
+          'gisaugaiolngighariyua;h;jharoajhiaotliaghrsaejiagheiognaegjaiogiahorgnasejgiagiehanre.aieg',
+        email: 'test@test.com',
+        password: 'password',
+      };
+
+      (mockUserService.updateUser as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException(
+          'userName must be shorter than or equal to 50 characters',
+        );
+      });
+
+      await expect(
+        usersController.updateUser(createUser.id, createUser),
+      ).rejects.toThrow(
+        'userName must be shorter than or equal to 50 characters',
+      );
+    });
+
+    it('メールアドレスが正しい形式じゃない場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test-test.com',
+        password: 'password',
+      };
+
+      (mockUserService.updateUser as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException('email must be an email');
+      });
+
+      await expect(
+        usersController.updateUser(createUser.id, createUser),
+      ).rejects.toThrow('email must be an email');
+    });
+
+    it('パスワードが短い場合', async () => {
+      const createUser: CreateUserDto = {
+        id: 1,
+        userName: 'test',
+        email: 'test@test.com',
+        password: 'ps',
+      };
+      (mockUserService.updateUser as jest.Mock).mockRejectedValue(() => {
+        throw new BadRequestException(
+          'password must be longer than or equal to 6 characters',
+        );
+      });
+
+      await expect(
+        usersController.updateUser(createUser.id, createUser),
+      ).rejects.toThrow(
+        'password must be longer than or equal to 6 characters',
+      );
+    });
   });
 
   describe('DELETE/users/:id', () => {

@@ -105,16 +105,6 @@ describe('UsersCreateTest', () => {
   });
 
   describe('GET/users/:id', () => {
-    it('存在しないIDを指定いる時', async () => {
-      (mockUserService.findById as jest.Mock).mockRejectedValue(
-        new NotFoundId(2),
-      );
-
-      await expect(mockUserService.findById(2)).rejects.toThrow(
-        `指定されたID:2は見つかりませんでした`,
-      );
-    });
-
     it('正常値', async () => {
       const getUser: CreateUserDto = {
         id: 1,
@@ -125,6 +115,16 @@ describe('UsersCreateTest', () => {
 
       (mockUserService.findById as jest.Mock).mockResolvedValue(getUser);
       await expect(usersController.findById(1)).resolves.toEqual(getUser);
+    });
+
+    it('存在しないIDを指定いる時', async () => {
+      (mockUserService.findById as jest.Mock).mockRejectedValue(
+        new NotFoundId(2),
+      );
+
+      await expect(mockUserService.findById(2)).rejects.toThrow(
+        `指定されたID:2は見つかりませんでした`,
+      );
     });
   });
 

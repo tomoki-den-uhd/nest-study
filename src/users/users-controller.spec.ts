@@ -12,6 +12,7 @@ describe('UsersCreateTest', () => {
     create: jest.fn(),
     findById: jest.fn(),
     updateUser: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -101,5 +102,30 @@ describe('UsersCreateTest', () => {
     await expect(mockUserService.updateUser(2)).rejects.toThrow(
       `指定されたID:2は見つかりませんでした`,
     );
+  });
+
+  describe('DELETE/users/:id', () => {
+    it('正常値', async () => {
+      const deleteUser: CreateUserDto = {
+        id: 1,
+        userName: 'nageihgaiwe',
+        email: 'test@test.com',
+        password: 'password',
+      };
+      (mockUserService.delete as jest.Mock).mockResolvedValue(deleteUser);
+      await expect(usersController.delete(deleteUser.id)).resolves.toEqual(
+        deleteUser,
+      );
+    });
+
+    it('存在しないIDを指定いる時', async () => {
+      (mockUserService.delete as jest.Mock).mockRejectedValue(
+        new NotFoundId(2),
+      );
+
+      await expect(mockUserService.delete(2)).rejects.toThrow(
+        `指定されたID:2は見つかりませんでした`,
+      );
+    });
   });
 });

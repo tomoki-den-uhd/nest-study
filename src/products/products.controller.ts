@@ -17,7 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request as ExpressRequest } from 'express';
 import { RequestUser } from 'src/types/requestUser';
 import { Roles } from 'src/auth/guard/roles.decorators';
-import { RolesGuard } from 'src/auth/guard/roles.gurad';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { UnauthorizedException, NotFoundException } from '@nestjs/common';
 
 @Controller('products')

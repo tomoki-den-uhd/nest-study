@@ -50,6 +50,13 @@ export class AuthService {
         userName: user.userName,
         role: user.role,
       };
+
+      user.lastLoginAt = new Date();
+      await this.prismaService.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() },
+      });
+      
       const token = this.jwtService.sign(payloard);
       return { token };
     }

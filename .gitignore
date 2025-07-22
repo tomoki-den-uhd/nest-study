@@ -59,3 +59,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 docker
 
 node_modules
+prisma/migrations/20250722015547_add_last_login_at_to_user/migration.sql

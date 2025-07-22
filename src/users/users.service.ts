@@ -3,7 +3,7 @@ import { User } from './users.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailAlreadyExistsException, NotFoundId } from './users.exception';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
@@ -34,7 +34,7 @@ export class UsersService {
       where: { email: createUserDto.email },
     });
     if (emailExists) {
-      throw new EmailAlreadyExistsException('createuserDto.email');
+      throw new EmailAlreadyExistsException(createUserDto.email);
     }
     const { userName, email, password } = createUserDto;
     return await this.prismaService.user.create({

@@ -1,5 +1,5 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, MaxLength, IsEmail, MinLength } from 'class-validator';
-import { defaultIfEmpty } from 'rxjs';
 
 export class CredentialsDto {
   @IsNotEmpty()
@@ -14,5 +14,6 @@ export class CredentialsDto {
   @MinLength(6)
   password: string;
 
-  role;
+  @Transform(({ value }) => value ?? 'user')
+  role: string;
 }

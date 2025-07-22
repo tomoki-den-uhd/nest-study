@@ -13,6 +13,7 @@ export class BatchService {
     try {
       await this.prismaService.product.findFirstOrThrow({});
       const refill = await this.prismaService.product.updateMany({
+        where: { stock: { lt: 10 } },
         data: { stock: 10 },
       });
 
@@ -28,7 +29,7 @@ export class BatchService {
   }
 
   scheduleStockRefill() {
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('*/5 * * * * ', async () => {
       await this.refillStock();
     });
   }

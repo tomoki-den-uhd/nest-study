@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Product } from './products.model';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -10,15 +10,23 @@ import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 @Injectable()
 export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
-  private products: Product[] = [];
 
-  async findAllById(id: number, createUserId: number): Promise<Product[]> {
-    return await this.prismaService.product.findMany({
+  async findByProductId(id: number, createUserId: number): Promise<Product> {
+    const productExist = await this.prismaService.product.findUnique({
       where: {
         id,
-        createUserId,
       },
     });
+
+    if (!productExist) {
+      throw new NotFoundId(id);
+    }
+
+    if (productExist.createUserId !== createUserId) {
+      throw new ForbiddenException('権限がありません');
+    }
+
+    return productExist;
   }
 
   //ここにfindAllを使ってフィルタリング化するものをかく
